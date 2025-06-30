@@ -2,6 +2,7 @@ use solana_sdk::{
     instruction::Instruction,
     pubkey::Pubkey,
     system_instruction,
+    system_program,
 };
 use spl_token::{
     instruction as spl_instruction,
@@ -27,8 +28,6 @@ pub fn create_mint_instruction(
     let mint_pubkey = Pubkey::from_str(mint)
         .map_err(|_| anyhow!("Invalid mint address"))?;
     
-    let rent_pubkey = solana_sdk::sysvar::rent::id();
-    
     let instruction = spl_instruction::initialize_mint(
         &TOKEN_PROGRAM_ID,
         &mint_pubkey,
@@ -37,11 +36,14 @@ pub fn create_mint_instruction(
         decimals,
     )?;
     
-    let accounts = instruction.accounts.iter().map(|acc| AccountMeta {
-        pubkey: acc.pubkey.to_string(),
-        is_signer: acc.is_signer,
-        is_writable: acc.is_writable,
-    }).collect();
+    let mut accounts = Vec::new();
+    for acc in &instruction.accounts {
+        accounts.push(AccountMeta {
+            pubkey: acc.pubkey.to_string(),
+            is_signer: acc.is_signer,
+            is_writable: acc.is_writable,
+        });
+    }
     
     Ok(InstructionResponse {
         program_id: instruction.program_id.to_string(),
@@ -74,11 +76,14 @@ pub fn create_mint_to_instruction(
         amount,
     )?;
     
-    let accounts = instruction.accounts.iter().map(|acc| AccountMeta {
-        pubkey: acc.pubkey.to_string(),
-        is_signer: acc.is_signer,
-        is_writable: acc.is_writable,
-    }).collect();
+    let mut accounts = Vec::new();
+    for acc in &instruction.accounts {
+        accounts.push(AccountMeta {
+            pubkey: acc.pubkey.to_string(),
+            is_signer: acc.is_signer,
+            is_writable: acc.is_writable,
+        });
+    }
     
     Ok(InstructionResponse {
         program_id: instruction.program_id.to_string(),
@@ -104,11 +109,14 @@ pub fn create_sol_transfer_instruction(
     
     let instruction = system_instruction::transfer(&from_pubkey, &to_pubkey, lamports);
     
-    let accounts = instruction.accounts.iter().map(|acc| AccountMeta {
-        pubkey: acc.pubkey.to_string(),
-        is_signer: acc.is_signer,
-        is_writable: acc.is_writable,
-    }).collect();
+    let mut accounts = Vec::new();
+    for acc in &instruction.accounts {
+        accounts.push(AccountMeta {
+            pubkey: acc.pubkey.to_string(),
+            is_signer: acc.is_signer,
+            is_writable: acc.is_writable,
+        });
+    }
     
     Ok(InstructionResponse {
         program_id: instruction.program_id.to_string(),
@@ -148,11 +156,14 @@ pub fn create_token_transfer_instruction(
         amount,
     )?;
     
-    let accounts = instruction.accounts.iter().map(|acc| AccountMeta {
-        pubkey: acc.pubkey.to_string(),
-        is_signer: acc.is_signer,
-        is_writable: acc.is_writable,
-    }).collect();
+    let mut accounts = Vec::new();
+    for acc in &instruction.accounts {
+        accounts.push(AccountMeta {
+            pubkey: acc.pubkey.to_string(),
+            is_signer: acc.is_signer,
+            is_writable: acc.is_writable,
+        });
+    }
     
     Ok(InstructionResponse {
         program_id: instruction.program_id.to_string(),
